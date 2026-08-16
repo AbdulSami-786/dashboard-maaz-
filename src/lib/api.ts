@@ -1,6 +1,6 @@
 import type { AdminUser, Order, Review, WishlistItem } from './types';
 
-const BASE_URL = import.meta.env.VITE_APPS_SCRIPT_URL as string | undefined;
+const BASE_URL = "https://script.google.com/macros/s/AKfycbxcqf6L4_TVMWcwPsElwzNid7XPailjMVxhwB4m85j2JfoJeImsg1Z8Qz-EBK7v0OePWg/exec" as string | undefined;
 
 const ADMIN_KEY_STORAGE_KEY = 'mdfashion_admin_key';
 
