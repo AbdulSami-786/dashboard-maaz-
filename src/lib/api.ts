@@ -1,18 +1,22 @@
 import type { AdminUser, Order, Review, WishlistItem } from './types';
 
-const BASE_URL = "https://script.google.com/macros/s/AKfycbxcqf6L4_TVMWcwPsElwzNid7XPailjMVxhwB4m85j2JfoJeImsg1Z8Qz-EBK7v0OePWg/exec" as string | undefined;
+const BASE_URL = "https://script.google.com/macros/s/AKfycbwdmBD412KdzkV_oexuWxifu5GaSyglBNNF3HLdoNwKxVUEJkSQ4AF20wMm7RfboQYbmg/exec" as string | undefined;
 
+const ADMIN_USERNAME_STORAGE_KEY = 'mdfashion_admin_username';
 const ADMIN_KEY_STORAGE_KEY = 'mdfashion_admin_key';
 
+export function getStoredAdminUsername(): string | null {
+  return localStorage.getItem(ADMIN_USERNAME_STORAGE_KEY);
+}
 export function getStoredAdminKey(): string | null {
   return localStorage.getItem(ADMIN_KEY_STORAGE_KEY);
 }
-
-export function setStoredAdminKey(key: string) {
+export function setStoredAdminCredentials(username: string, key: string) {
+  localStorage.setItem(ADMIN_USERNAME_STORAGE_KEY, username);
   localStorage.setItem(ADMIN_KEY_STORAGE_KEY, key);
 }
-
 export function clearStoredAdminKey() {
+  localStorage.removeItem(ADMIN_USERNAME_STORAGE_KEY);
   localStorage.removeItem(ADMIN_KEY_STORAGE_KEY);
 }
 
@@ -29,10 +33,13 @@ async function call<T>(action: string, payload: Record<string, unknown> = {}): P
     throw new ApiError('VITE_APPS_SCRIPT_URL is not set. Add it to your .env file.');
   }
 
-  const adminKey = getStoredAdminKey();
-  const body: Record<string, unknown> = { action, ...payload };
-  if (adminKey && action.startsWith('admin')) body.adminKey = adminKey;
-
+ const adminUsername = getStoredAdminUsername();
+const adminKey = getStoredAdminKey();
+const body: Record<string, unknown> = { action, ...payload };
+if (adminUsername && adminKey && action.startsWith('admin')) {
+  body.adminUsername = adminUsername;
+  body.adminKey = adminKey;
+}
   let res: Response;
   try {
     res = await fetch(BASE_URL, {
@@ -58,8 +65,14 @@ async function call<T>(action: string, payload: Record<string, unknown> = {}): P
 /** Throws ApiError with the server's actual message (e.g. "Invalid admin key."
  *  or "Admin key not configured on the server…") so the login screen can show
  *  the real reason instead of a generic failure. */
-export async function verifyAdminKey(adminKey: string): Promise<void> {
-  await call<{ ok: true; orders: Order[] }>('adminGetOrders', { adminKey });
+export async function verifyAdminCredentials(username: string, key: string): Promise<void> {
+  await call<{ ok: true; orders: Order[] }>('adminGetOrders', { adminUsername: username, adminKey: key });
+}
+
+export async function updateAdminCredentials(newUsername: string, newPassword: string): Promise<void> {
+  await call<{ ok: true; username: string }>('adminUpdateCredentials', { newUsername, newPassword });
+  // Keep localStorage in sync so the current session doesn't get logged out.
+  setStoredAdminCredentials(newUsername, newPassword || getStoredAdminKey()!);
 }
 
 export async function fetchOrders(): Promise<Order[]> {

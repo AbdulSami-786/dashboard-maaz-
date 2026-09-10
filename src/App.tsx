@@ -7,6 +7,7 @@ import Orders from './pages/Orders';
 import Reviews from './pages/Reviews';
 import Customers from './pages/Customers';
 import Wishlist from './pages/Wishlist';
+import Settings from './pages/Setting';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthed } = useAuth();
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="reviews" element={<Reviews />} />
         <Route path="customers" element={<Customers />} />
         <Route path="wishlist" element={<Wishlist />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

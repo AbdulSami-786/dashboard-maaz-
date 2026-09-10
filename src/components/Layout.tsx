@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { to: '/reviews', label: 'Reviews', icon: Star, end: false },
   { to: '/customers', label: 'Customers', icon: Users, end: false },
   { to: '/wishlist', label: 'Wishlist', icon: Heart, end: false },
+  { to: '/settings', label: 'Settings', icon: Heart, end: false },
 ];
 
 export default function Layout() {

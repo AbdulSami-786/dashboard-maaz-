@@ -1,27 +1,34 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import { ApiError, clearStoredAdminKey, getStoredAdminKey, setStoredAdminKey, verifyAdminKey } from '../lib/api';
+import {
+  ApiError,
+  clearStoredAdminKey,
+  getStoredAdminUsername,
+  getStoredAdminKey,
+  setStoredAdminCredentials,
+  verifyAdminCredentials,
+} from '../lib/api';
 
 interface AuthContextValue {
   isAuthed: boolean;
   isChecking: boolean;
   error: string | null;
-  login: (key: string) => Promise<void>;
+  login: (username: string, key: string) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthed, setIsAuthed] = useState(() => Boolean(getStoredAdminKey()));
+  const [isAuthed, setIsAuthed] = useState(() => Boolean(getStoredAdminUsername() && getStoredAdminKey()));
   const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function login(key: string) {
+  async function login(username: string, key: string) {
     setIsChecking(true);
     setError(null);
-    setStoredAdminKey(key);
+    setStoredAdminCredentials(username, key);
     try {
-      await verifyAdminKey(key);
+      await verifyAdminCredentials(username, key);
       setIsAuthed(true);
     } catch (err) {
       clearStoredAdminKey();
