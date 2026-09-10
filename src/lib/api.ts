@@ -1,6 +1,6 @@
 import type { AdminUser, Order, Review, WishlistItem } from './types';
 
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwdmBD412KdzkV_oexuWxifu5GaSyglBNNF3HLdoNwKxVUEJkSQ4AF20wMm7RfboQYbmg/exec" as string | undefined;
+const BASE_URL = "https://script.google.com/macros/s/AKfycbwccjkJYW_D5ZBB3q4QoE4J5rdHPzwRQW_iTGekEjqWbwpH31UH9infgoNiSTKFg3XJNg/exec" as string | undefined;
 
 const ADMIN_USERNAME_STORAGE_KEY = 'mdfashion_admin_username';
 const ADMIN_KEY_STORAGE_KEY = 'mdfashion_admin_key';
